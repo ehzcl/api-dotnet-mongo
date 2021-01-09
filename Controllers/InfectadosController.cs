@@ -2,50 +2,51 @@ using mongo_dotnet.Models;
 using mongo_dotnet.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Web;
+
 
 namespace mongo_dotnet.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class InfectadosController
+    public class InfectadosController : Controller
     {
-        private readonly InfectadoService _infectadoService;
+        private readonly InfectadosService _infectadosService; 
 
-        public InfectadosController(InfectadoService infectadoService) {
-            _infectadoService = infectadoService;
+        public InfectadosController(InfectadosService infectadosService) {
+            _infectadosService = infectadosService;
         }
-    
+
         [HttpGet]
-        public ActionResult<List<Infectado>> Get() =>
-            _infectadoService.Get();
+        public ActionResult<List<Infectado>> Get () => _infectadosService.Get();
 
         [HttpGet("{id:length(24)}", Name = "GetInfectado")]
-        public ActionResult<Infectado> Get(string id) {
-            var inf = _infectadoService.Get(id);
+        public ActionResult<Infectado> Get(string id)
+        {
+            var infectado = _infectadosService.Get(id);
 
-            if (inf == null) {
-                // return NotFound();
-            }
-            return inf;
+            if (infectado == null)
+                return NotFound();
+
+            return infectado;
         }
 
         [HttpPost]
-        public ActionResult<Infectado> Create(Infectado inf) {
-            _infectadoService.Create(inf);
+        public ActionResult<Infectado> Create(Infectado infectado)
+        {
+            _infectadosService.Create(infectado);
 
-            return CreatedAtRoute("GetInfectado", new { id = inf.Id.ToString()}, inf);
+            return CreatedAtRoute("GetInfectado", new { id = infectado.Id.ToString() }, infectado);
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Infectado i) {
-            var inf = _infectadoService.Get(id);
+        public IActionResult Update(string id, Infectado infectadoIn)
+        {
+            var i = _infectadosService.Get(id);
 
-            if (inf == null ) {
-                
-            }
+            if (i == null)
+                return NotFound();
 
-            _infectadoService.Update(id, inf);
+            _infectadosService.Update(id,infectadoIn);
 
             return NoContent();
         }
@@ -53,14 +54,12 @@ namespace mongo_dotnet.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var inf = _infectadoService.Get(id);
+            var i = _infectadosService.Get(id);
 
-            if (inf == null)
-            {
+            if (i == null)
                 return NotFound();
-            }
 
-            _infectadoService.Remove(inf.Id);
+            _infectadosService.Remove(i.Id);
 
             return NoContent();
         }
